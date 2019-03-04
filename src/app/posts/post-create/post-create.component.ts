@@ -1,8 +1,10 @@
+import { mimeType } from './mime-type.validator';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Form, Validators } from '@angular/forms';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+
 
 
 
@@ -17,6 +19,7 @@ export class PostCreateComponent implements OnInit{
    private postId: string;
    isLoading = false;
    form: FormGroup;
+   imagePreview: string;
 
 
 
@@ -26,9 +29,15 @@ export class PostCreateComponent implements OnInit{
 
   ngOnInit(){
     this.form = new FormGroup({
-      title: new FormControl(null, {validators : [Validators.required, Validators.minLength(3)]
+      title: new FormControl(null,
+        {validators : [Validators.required, Validators.minLength(3)]
       }),
-      content: new FormControl(null, {validators : [Validators.required]
+      content: new FormControl(null,
+        {validators : [Validators.required]
+      }),
+      image: new FormControl(null,
+        {validators : [Validators.required],
+        asyncValidators: [mimeType]
       })
     });
 
@@ -41,10 +50,11 @@ export class PostCreateComponent implements OnInit{
          this.isLoading = true;
          this.postService.getPost(this.postId).subscribe(postData =>{
            this.isLoading = false;
-           this.post = {id: postData._id, title: postData.title, content: postData.content};
+           this.post = {id: postData._id, title: postData.title, content: postData.content, imagePath: postData.imagePath};
            this.form.setValue({
              title: this.post.title,
-             content: this.post.title
+             content: this.post.title,
+             image: this.post.imagePath
            })
          });
       }
@@ -61,14 +71,28 @@ export class PostCreateComponent implements OnInit{
       return;
     }
     if(this.mode === "create"){
-      this.postService.addPosts(this.form.value.title, this.form.value.content);
+      this.postService.addPosts(this.form.value.title, this.form.value.content, this.form.value.image);
     }
     else{
-      this.postService.updatePost(this.postId, this.form.value.title, this.form.value.content);
+      this.postService.updatePost(this.postId, this.form.value.title, this.form.value.content, this.form.value.image);
     }
 
 
 
    this.form.reset();
 }
+
+onImageUpload(event: Event){
+
+  const file = (event.target as HTMLInputElement).files[0];
+  this.form.patchValue({image: file});
+  this.form.get('image').updateValueAndValidity();
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    this.imagePreview = reader.result.toString();
+  };
+  reader.readAsDataURL(file);
+
+ }
 }
