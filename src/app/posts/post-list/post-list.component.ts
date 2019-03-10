@@ -37,10 +37,10 @@ export class PostListComponent implements OnInit, OnDestroy{
    this.userId = this.authService.getUserId();
    this.postSub = this.postService
    .getPostUpdateListener()
-    .subscribe((postData: {posts: Post[]; postCount: number}) =>{
+    .subscribe((postData: {post: Post[]; postCount: number}) =>{
       this.isLoading = false;
       this.totalPosts = postData.postCount;
-      this.posts = postData.posts;
+      this.posts = postData.post;
 
     });
 
@@ -68,7 +68,7 @@ export class PostListComponent implements OnInit, OnDestroy{
 
    onDelete(postId: string){
       this.isLoading = true;
-      this.postService.deletePost(postId).subscribe(() =>{
+      this.postService.deletePost(postId).subscribe((response) =>{
        this.postService.getPosts(this.postsPerPage, this.currentPage);
      }, () =>{
        this.isLoading = false;

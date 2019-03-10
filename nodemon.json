@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MONGO_ATLAS_PWD": "Y2Q5cGXxHbfmi2ti",
+    "JWT_KEY": "hamari_secret_key_hy_yeh_bandhu"
+  }
+}

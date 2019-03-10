@@ -12,7 +12,7 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: false }));
 app.use("/images", express.static(path.join("backend/images")));
 
-mongoose.connect("mongodb+srv://faaizi:Y2Q5cGXxHbfmi2ti@cluster0-xsrq9.mongodb.net/mean-db?retryWrites=true", { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://faaizi:"+ process.env.MONGO_ATLAS_PWD +"@cluster0-xsrq9.mongodb.net/mean-db?retryWrites=true", { useNewUrlParser: true })
 .then(() =>{
   console.log("Connected Successfully");
 })
